@@ -147,19 +147,25 @@ namespace Cb
     {
         if (key == GLUT_KEY_UP)
         {
-            pitch += 1.0;
+            pitch += 1.0f;
         }
         else if (key == GLUT_KEY_DOWN)
         {
-            pitch -= 1.0;
+            pitch -= 1.0f;
         }
         else if (key == GLUT_KEY_RIGHT)
         {
-            yaw += 1.0;
+            yaw += 1.0f;
         }
         else if (key == GLUT_KEY_LEFT)
         {
-            yaw -= 1.0;
+            yaw -= 1.0f;
+        }
+        else if (key == GLUT_KEY_HOME)
+        {
+            pitch = 0.0f;
+            yaw = 0.0f;
+            roll = 0.0f;
         }
     }
 
@@ -172,36 +178,35 @@ namespace Cb
         }
         else if (key == '+')
         {
-            cubeZ += 0.1; // 확대
-            
+            cubeZ += 0.1f; // 확대
         }
         else if (key == '-')
         {
-            cubeZ -= 0.1; // 축소
+            cubeZ -= 0.1f; // 축소
         }
         else if (key == 'q')
         {
-            roll += 1.0; // 좌회전
+            roll += 1.0f; // z+회전 (좌회전)
         }
         else if (key == 'e')
         {
-            roll -= 1.0; // 우회전
+            roll -= 1.0f; // z-회전 (우회전)
         }
         else if (key == 'w')
         {
-            cubeY += 0.01;
+            cubeY += 0.01f; // 상
         }
         else if (key == 's')
         {
-            cubeY -= 0.01;
+            cubeY -= 0.01f; // 하
         }
         else if (key == 'd')
         {
-            cubeX += 0.01;
+            cubeX += 0.01f; // 우
         }
         else if (key == 'a')
         {
-            cubeX -= 0.01;
+            cubeX -= 0.01f; // 좌
         }
     }
 }
