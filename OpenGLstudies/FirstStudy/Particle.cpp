@@ -9,11 +9,11 @@ namespace Ptc
 
     struct units
     {
-        float rad = 0.03f; // 유닛 반지름
+        float rad = 0.015f; // 유닛 반지름
         float x = 0.0f; // 유닛 x좌표
         float y = 0.0f; // 유닛 y좌표
     };
-    units unit[100];
+    units unit[1000];
 
     // const 필드 조건
     float x_field = 0.0000f;
@@ -43,7 +43,6 @@ namespace Ptc
         if ((unit[unit_num].y > 1.0) || (unit[unit_num].y < -1.0)) unit[unit_num].y -= dy * 2.0f;
 
         // polygon 생성
-        glColor3f(0.0f, 0.0f, 1.0f);
         glBegin(GL_POLYGON);
         float rx = 0.0f;
         float ry = 0.0f;
@@ -61,6 +60,7 @@ namespace Ptc
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 클리어 컬러
         glClear(GL_COLOR_BUFFER_BIT); // 컬러 버퍼로 클리어 (클리어 컬러 함수를 쓰면 컬러 버퍼에 색상 정의되고 그거로 화면을 지우는듯, 그림판 프로그램 생각하면 될듯)
 
+        glColor3f(0.0f, 0.0f, 1.0f);
         for (int i = 0; i < sizeof(unit)/sizeof(unit[0]); i++)
         {
             polygon_unit(i);
