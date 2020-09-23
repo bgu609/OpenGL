@@ -4,16 +4,20 @@ namespace Ptc
 {
     std::random_device rd; // 시드값을 얻기 위한 랜덤 디바이스 생성
     std::mt19937 gen(rd()); // 난수 생성 엔진 초기화
-    std::uniform_int_distribution<int> dis(0, 9);
-    std::uniform_int_distribution<int> num_sign(0, 1);
+    std::uniform_int_distribution<int> dis(0, 9); // 랜덤 변화 범위
+    std::uniform_int_distribution<int> num_sign(0, 1); // 부호 범위
 
     struct units
     {
-        float rad = 0.03f;
-        float x = 0.0f;
-        float y = 0.0f;
+        float rad = 0.03f; // 유닛 반지름
+        float x = 0.0f; // 유닛 x좌표
+        float y = 0.0f; // 유닛 y좌표
     };
-    units unit[10];
+    units unit[100];
+
+    // const 필드 조건
+    float x_field = 0.0000f;
+    float y_field = -0.0003f;
 
     void polygon_unit(int unit_num)
     {
@@ -32,8 +36,8 @@ namespace Ptc
         if (rand_y_sign) dy = dy * -1.0f;
 
         // 원래 위치에서 변화량만큼 이동
-        unit[unit_num].x += dx;
-        unit[unit_num].y += dy;
+        unit[unit_num].x += x_field + dx;
+        unit[unit_num].y += y_field + dy;
         // 바운더리에서 반사
         if ((unit[unit_num].x > 1.0) || (unit[unit_num].x < -1.0)) unit[unit_num].x -= dx * 2.0f;
         if ((unit[unit_num].y > 1.0) || (unit[unit_num].y < -1.0)) unit[unit_num].y -= dy * 2.0f;
