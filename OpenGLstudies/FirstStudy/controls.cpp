@@ -57,5 +57,5 @@ void reshape3d(GLsizei width, GLsizei height) // 윈도우 크기에 관계없이 모양 고�
 
 void timer(int value) {
     glutPostRedisplay();      //윈도우를 다시 그리도록 요청
-    glutTimerFunc(30, timer, 0); //다음 타이머 이벤트는 30밀리세컨트 후  호출됨.
+    glutTimerFunc(10, timer, 0); //다음 타이머 이벤트는 %d밀리세컨트 후  호출됨.
 }
