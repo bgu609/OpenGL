@@ -13,7 +13,7 @@ namespace Ptc
         float x = 0.0f; // 유닛 x좌표
         float y = 0.0f; // 유닛 y좌표
     };
-    units unit[1000];
+    units unit[5000];
 
     // const 필드 조건
     float x_field = 0.0000f;
@@ -52,6 +52,43 @@ namespace Ptc
             ry = unit[unit_num].y + unit[unit_num].rad * (float)sin(i * M_PI / 180);
             glVertex2f(rx, ry);
         }
+
+        glEnd();
+    }
+
+    void point_unit(int unit_num)
+    {
+        // 좌표 랜덤값 생성
+        int rand_x = dis(gen);
+        int rand_y = dis(gen);
+        // 부호 랜덤값 생성
+        int rand_x_sign = num_sign(gen);
+        int rand_y_sign = num_sign(gen);
+
+        // 랜덤 변화량
+        float dx = (float)(rand_x) / 500.0f;
+        float dy = (float)(rand_y) / 500.0f;
+        // 랜덤 부호
+        if (rand_x_sign) dx = dx * -1.0f;
+        if (rand_y_sign) dy = dy * -1.0f;
+
+        // 원래 위치에서 변화량만큼 이동
+        unit[unit_num].x += x_field + dx;
+        unit[unit_num].y += y_field + dy;
+        // 바운더리에서 반사
+        if ((unit[unit_num].x > 1.0) || (unit[unit_num].x < -1.0)) unit[unit_num].x -= dx * 2.0f;
+        if ((unit[unit_num].y > 1.0) || (unit[unit_num].y < -1.0)) unit[unit_num].y -= dy * 2.0f;
+
+        // polygon 생성
+        glPointSize(1.0);
+        glBegin(GL_POINTS);
+        float rx = 0.0f;
+        float ry = 0.0f;
+
+        rx = unit[unit_num].x;
+        ry = unit[unit_num].y;
+        glVertex2f(rx, ry);
+
         glEnd();
     }
 
@@ -63,7 +100,8 @@ namespace Ptc
         glColor3f(0.0f, 0.0f, 1.0f);
         for (int i = 0; i < sizeof(unit)/sizeof(unit[0]); i++)
         {
-            polygon_unit(i);
+            //polygon_unit(i);
+            point_unit(i);
         }
 
         //glFlush();
