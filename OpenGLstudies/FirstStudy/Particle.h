@@ -4,8 +4,8 @@
 
 #include "gl/freeglut.h"
 #include <math.h>
-#include <ctime>
-#include <cstdlib>
+#include <iostream>
+#include <random>
 
 namespace Ptc
 {

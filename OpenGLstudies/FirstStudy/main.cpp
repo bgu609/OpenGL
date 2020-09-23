@@ -19,8 +19,8 @@ int main(int argc, char** argv)
 	//Cubes cube1;
 	//cube1.draw();
 
-	Particles p;
-	p.draw();
+	Particles p1;
+	p1.draw();
 
 	glutKeyboardFunc(keyboard); // 키보드 콜백 함수 등록
 	//glutSpecialFunc(Cb::special);

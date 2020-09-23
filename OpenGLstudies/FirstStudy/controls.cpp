@@ -29,10 +29,6 @@ void reshape2d(GLsizei width, GLsizei height) // 윈도우 크기에 관계없이 모양 고�
         // aspect < 1이면, width를 [-1,1]로 설정하고 height를  [-1/aspect, 1/aspect]로 설정한다.
         gluOrtho2D(-1.0, 1.0, -1.0 / aspect, 1.0 / aspect);
     }
-
-    //뒤에 오는 계산들은 Modelview Matrix에 영향을 주도록 설정한다. 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity(); //Modelview matrix 초기화
 }
 
 void reshape3d(GLsizei width, GLsizei height) // 윈도우 크기에 관계없이 모양 고정 (크기는 바뀜)
@@ -48,10 +44,6 @@ void reshape3d(GLsizei width, GLsizei height) // 윈도우 크기에 관계없이 모양 고�
 
     //Field of view angle(단위 degrees), 윈도우의 aspect ratio, Near와 Far Plane설정, 3d 옵션
     gluPerspective(45, (GLfloat)width / (GLfloat)height, 1.0, 100.0);
-
-    //뒤에 오는 계산들은 Modelview Matrix에 영향을 주도록 설정한다. 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity(); //Modelview matrix 초기화
 }
 
 
