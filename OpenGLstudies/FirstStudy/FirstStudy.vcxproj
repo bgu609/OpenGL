@@ -147,12 +147,14 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="FirstStudy.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Triangle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="controls.h" />
     <ClInclude Include="Cube.h" />
+    <ClInclude Include="Particle.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Triangle.h" />
   </ItemGroup>

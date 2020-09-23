@@ -4,5 +4,6 @@
 #include <iostream>
 
 void keyboard(unsigned char key, int x, int y);
-void reshape(GLsizei width, GLsizei height);
+void reshape2d(GLsizei width, GLsizei height);
+void reshape3d(GLsizei width, GLsizei height);
 void timer(int value);

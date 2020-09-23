@@ -145,11 +145,11 @@ namespace Cb
 
     void special(int key, int x, int y)
     {
-        if (key == GLUT_KEY_UP)
+        if (key == GLUT_KEY_DOWN)
         {
             pitch += 1.0f;
         }
-        else if (key == GLUT_KEY_DOWN)
+        else if (key == GLUT_KEY_UP)
         {
             pitch -= 1.0f;
         }
