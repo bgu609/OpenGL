@@ -17,16 +17,13 @@ namespace Ideal
     struct units
     {
         float rad = 0.05f; // 유닛 반지름
-        float r_code = 0.0f; // R
-        float g_code = 0.0f; // G
-        float b_code = 1.0f; // B
 
         float x = 0.0f; // 유닛 x좌표
         float y = 0.0f; // 유닛 y좌표
 
         float mass = 1.0f; // 유닛 질량
         float vel = 0.0f; // 유닛 속력
-        float acc = 0.0f; // 유닛 가속도
+        float acc = 0.0f; // 유닛 가속
     };
     units unit[50];
 
@@ -137,7 +134,7 @@ namespace Ideal
         glClear(GL_COLOR_BUFFER_BIT); // 컬러 버퍼로 클리어 (클리어 컬러 함수를 쓰면 컬러 버퍼에 색상 정의되고 그거로 화면을 지우는듯, 그림판 프로그램 생각하면 될듯)
 
         int unit_nums = sizeof(unit) / sizeof(unit[0]);
-        glColor3f(unit[0].r_code, unit[0].g_code, unit[0].b_code);
+        glColor3f(0.0f, 0.0f, 1.0f);
         for (int i = 0; i < unit_nums; i++)
         {
             if (i > unit_nums * 0.7)
