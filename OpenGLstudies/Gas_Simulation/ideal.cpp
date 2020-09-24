@@ -27,9 +27,11 @@ namespace Ideal
     };
     units unit[50];
 
-    // const 필드 조건
-    float x_field = 0.0000f;
-    float y_field = 0.0000f;
+    // 필드 조건
+    float r_field = 0.0005f;
+    int th_field = 30;
+    float x_field = r_field * (float)cos(th_field * M_PI / 180);
+    float y_field = r_field * (float)sin(th_field * M_PI / 180);
 
     float b_length = 0.7f; // 바운더리 길이
     float w_length = 1.0f;
@@ -72,10 +74,10 @@ namespace Ideal
             nybf = unit[unit_num].y + b_y; // -y 초과량
             if ((pxbf > 0) || (nxbf < 0) || (pybf > 0) || (nybf < 0))
             {
-                if (pxbf > 0) unit[unit_num].x -= pxbf * 2.0f - x_field * (pxbf / dx); // +x 반사
-                else if (nxbf < 0) unit[unit_num].x -= nxbf * 2.0f - x_field * (nxbf / dx); // -x 반사
-                if (pybf > 0) unit[unit_num].y -= pybf * 2.0f - y_field * (pybf / dy); // +y 반사
-                else if (nybf < 0) unit[unit_num].y -= nybf * 2.0f - y_field * (nybf / dy); // -y 반사
+                if ((pxbf > 0) && (dx != 0)) unit[unit_num].x -= pxbf * 2.0f - x_field * (pxbf / dx); // +x 반사
+                else if (nxbf < 0 && (dx != 0)) unit[unit_num].x -= nxbf * 2.0f - x_field * (nxbf / dx); // -x 반사
+                if (pybf > 0 && (dy != 0)) unit[unit_num].y -= pybf * 2.0f - y_field * (pybf / dy); // +y 반사
+                else if (nybf < 0 && (dy != 0)) unit[unit_num].y -= nybf * 2.0f - y_field * (nybf / dy); // -y 반사
             }
             else
             {
@@ -148,6 +150,7 @@ namespace Ideal
             //point_unit(i);
 
             // cout << i << " : " << unit[i].x << " " << unit[i].y << endl; // 디버깅용
+            // cout << x_field << " " << y_field << endl; // 디버깅용
         }
 
         //Cnd::square_boundary(b_length); // 바운더리
