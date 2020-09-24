@@ -9,7 +9,7 @@ namespace Ptc
 
     struct units
     {
-        float rad = 0.015f; // 유닛 반지름
+        float rad = 0.02f; // 유닛 반지름
         float x = 0.0f; // 유닛 x좌표
         float y = 0.0f; // 유닛 y좌표
     };
@@ -94,7 +94,7 @@ namespace Ptc
 
     void display()
     {
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 클리어 컬러
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // 클리어 컬러
         glClear(GL_COLOR_BUFFER_BIT); // 컬러 버퍼로 클리어 (클리어 컬러 함수를 쓰면 컬러 버퍼에 색상 정의되고 그거로 화면을 지우는듯, 그림판 프로그램 생각하면 될듯)
 
         glColor3f(0.0f, 0.0f, 1.0f);

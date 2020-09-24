@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30517.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FirstStudy", "FirstStudy\FirstStudy.vcxproj", "{AE64A60A-1B48-4B98-84DB-B28FCE0789EB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Gas_Simulation", "Gas_Simulation\Gas_Simulation.vcxproj", "{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{AE64A60A-1B48-4B98-84DB-B28FCE0789EB}.Release|x64.Build.0 = Release|x64
 		{AE64A60A-1B48-4B98-84DB-B28FCE0789EB}.Release|x86.ActiveCfg = Release|Win32
 		{AE64A60A-1B48-4B98-84DB-B28FCE0789EB}.Release|x86.Build.0 = Release|Win32
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Debug|x64.ActiveCfg = Debug|x64
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Debug|x64.Build.0 = Debug|x64
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Debug|x86.ActiveCfg = Debug|Win32
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Debug|x86.Build.0 = Debug|Win32
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Release|x64.ActiveCfg = Release|x64
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Release|x64.Build.0 = Release|x64
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Release|x86.ActiveCfg = Release|Win32
+		{D7D4F6EA-FABD-4CDB-BFD5-4EB77B9ADEA3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
