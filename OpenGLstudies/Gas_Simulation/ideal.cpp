@@ -10,7 +10,7 @@ namespace Ideal
     // 환경
     std::random_device rd; // 시드값을 얻기 위한 랜덤 디바이스 생성
     std::mt19937 gen(rd()); // 난수 생성 엔진 초기화
-    std::uniform_int_distribution<int> dis(0, 19); // 랜덤 변화 범위
+    std::uniform_int_distribution<int> dis(0, 50); // 랜덤 변화 범위 (온도처럼 사용)
     std::uniform_int_distribution<int> theta(0, 359); // 랜덤 angle 범위
 
     // 유닛
@@ -25,18 +25,18 @@ namespace Ideal
         float vel = 0.0f; // 유닛 속력
         float acc = 0.0f; // 유닛 가속
     };
-    units unit[50];
+    units unit[100];
 
     // 필드 조건
     float r_field = 0.0005f;
-    int th_field = 30;
+    int th_field = -85;
     float x_field = r_field * (float)cos(th_field * M_PI / 180);
     float y_field = r_field * (float)sin(th_field * M_PI / 180);
 
-    float b_length = 0.7f; // 바운더리 길이
-    float w_length = 0.01f;
-    float h_length = 0.01f;
-
+    float b_length = 0.7f; // 바운더리 길이 (square)
+    // rectangle
+    float w_length = 1.0f;
+    float h_length = 1.5f;
     // 바운더리 정의
     float b_x = w_length / 2.0f;
     float b_y = h_length / 2.0f;
@@ -44,6 +44,31 @@ namespace Ideal
 
     // =============================================================
     // physics
+
+    // field
+    void field_flow(float r_field, int th_field, int idx)
+    {
+        int arrow_angle = th_field + 5;
+        float flow_array_x = idx * 0.1f * (float)sin(th_field * M_PI / 180);
+        float flow_array_y = idx * 0.1f * (float)cos(th_field * M_PI / 180);
+        float x = r_field * 1000 * (float)cos(th_field * M_PI / 180);
+        float y = r_field * 1000 * (float)sin(th_field * M_PI / 180);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        glColor4f(0.3f, 1.0f, 0.3f, 0.3f);
+        glBegin(GL_LINE_STRIP);
+
+        // 화살표로 표시
+        glVertex2f(-x - flow_array_x, -y + flow_array_y);
+        glVertex2f(x - flow_array_x, y + flow_array_y);
+        glVertex2f(r_field * 900 * (float)cos(arrow_angle * M_PI / 180) - flow_array_x, r_field * 900 * (float)sin(arrow_angle * M_PI / 180) + flow_array_y);
+
+        glEnd();
+
+        glDisable(GL_BLEND);
+    }
 
     // 다음 위치 계산
     void unit_position(int unit_num)
@@ -54,7 +79,7 @@ namespace Ideal
         unit[unit_num].vel = (float)rand_r / 0.010f;
 
         // 좌표 변환
-        float dgen = unit[unit_num].mass * 250.0f; // distance generate, 질량 효과 느낌나게 임의로 설정해봄
+        float dgen = unit[unit_num].mass * 1000.0f; // distance generate, 질량 효과 느낌나게 임의로 설정해봄
         float rand_dx = (float)rand_r * (float)cos(rand_th * M_PI / 180) / dgen;
         float rand_dy = (float)rand_r * (float)sin(rand_th * M_PI / 180) / dgen;
 
@@ -179,6 +204,11 @@ namespace Ideal
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // 클리어 컬러
         glClear(GL_COLOR_BUFFER_BIT); // 컬러 버퍼로 클리어 (클리어 컬러 함수를 쓰면 컬러 버퍼에 색상 정의되고 그거로 화면을 지우는듯, 그림판 프로그램 생각하면 될듯)
 
+        for (int idx = -10; idx < 11; idx++)
+        {
+            field_flow(r_field, th_field, idx); // field 그리기
+        }
+
         int unit_nums = sizeof(unit) / sizeof(unit[0]);
         glColor3f(0.0f, 0.0f, 1.0f);
         for (int i = 0; i < unit_nums; i++)
@@ -196,7 +226,7 @@ namespace Ideal
             // cout << i << " : " << unit[i].x << " " << unit[i].y << endl; // 디버깅용
             // cout << x_field << " " << y_field << endl; // 디버깅용
         }
-
+        
         //Cnd::square_boundary(b_length); // 바운더리
         Cnd::rect_boundary(w_length, h_length); // 바운더리
 
