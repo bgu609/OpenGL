@@ -65,23 +65,51 @@ namespace Ideal
         unit[unit_num].y += dy;
 
         // 바운더리에서 반사
-        float pxbf; float nxbf; float pybf; float nybf;
         while (true) // 반사 후 바운더리 내부에 위치할 때까지 반복
         {
-            pxbf = unit[unit_num].x - b_x; // +x 초과량
-            nxbf = unit[unit_num].x + b_x; // -x 초과량
-            pybf = unit[unit_num].y - b_y; // +y 초과량
-            nybf = unit[unit_num].y + b_y; // -y 초과량
-            if ((pxbf > 0) || (nxbf < 0) || (pybf > 0) || (nybf < 0))
+            if ((fabs(unit[unit_num].x) <= fabs(b_x)) && (fabs(unit[unit_num].y) <= fabs(b_y)))
             {
-                if ((pxbf > 0) && (dx != 0)) unit[unit_num].x -= pxbf * 2.0f - x_field * (pxbf / dx); // +x 반사
-                else if (nxbf < 0 && (dx != 0)) unit[unit_num].x -= nxbf * 2.0f - x_field * (nxbf / dx); // -x 반사
-                if (pybf > 0 && (dy != 0)) unit[unit_num].y -= pybf * 2.0f - y_field * (pybf / dy); // +y 반사
-                else if (nybf < 0 && (dy != 0)) unit[unit_num].y -= nybf * 2.0f - y_field * (nybf / dy); // -y 반사
+                break;
             }
             else
             {
-                break;
+                if (unit[unit_num].x > b_x) // +x 초과
+                {
+                    unit[unit_num].x -= rand_dx * 2.0f; // +x 반사
+
+                    if (unit[unit_num].x > b_x)
+                    {
+                        unit[unit_num].x = b_x;
+                    }
+                }
+                else if (unit[unit_num].x < -b_x) // -x 초과
+                {
+                    unit[unit_num].x += rand_dx * 2.0f; // -x 반사
+
+                    if (unit[unit_num].x < -b_x)
+                    {
+                        unit[unit_num].x = -b_x;
+                    }
+                }
+
+                if (unit[unit_num].y > b_y) // +y 초과
+                {
+                    unit[unit_num].y -= rand_dy * 2.0f; // +y 반사
+
+                    if (unit[unit_num].y > b_y)
+                    {
+                        unit[unit_num].y = b_y;
+                    }
+                }
+                else if (unit[unit_num].y < -b_y) // -y 초과
+                {
+                    unit[unit_num].y += rand_dy * 2.0f; // -y 반사
+
+                    if (unit[unit_num].y < -b_y)
+                    {
+                        unit[unit_num].y = -b_y;
+                    }
+                }
             }
         }
     }
