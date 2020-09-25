@@ -34,8 +34,12 @@ namespace Ideal
     float y_field = r_field * (float)sin(th_field * M_PI / 180);
 
     float b_length = 0.7f; // 바운더리 길이
-    float w_length = 1.0f;
-    float h_length = 1.4f;
+    float w_length = 0.01f;
+    float h_length = 0.01f;
+
+    // 바운더리 정의
+    float b_x = w_length / 2.0f;
+    float b_y = h_length / 2.0f;
     // =============================================================
 
     // =============================================================
@@ -44,10 +48,6 @@ namespace Ideal
     // 다음 위치 계산
     void unit_position(int unit_num)
     {
-        // 바운더리 정의
-        float b_x = w_length / 2.0f;
-        float b_y = h_length / 2.0f;
-
         // 극좌표 랜덤값 생성
         int rand_r = dis(gen);
         int rand_th = theta(gen);
@@ -67,7 +67,7 @@ namespace Ideal
         // 바운더리에서 반사
         while (true) // 반사 후 바운더리 내부에 위치할 때까지 반복
         {
-            if ((fabs(unit[unit_num].x) <= fabs(b_x)) && (fabs(unit[unit_num].y) <= fabs(b_y)))
+            if ((fabs(unit[unit_num].x) <= b_x) && (fabs(unit[unit_num].y) <= b_y))
             {
                 break;
             }
@@ -77,18 +77,26 @@ namespace Ideal
                 {
                     unit[unit_num].x -= rand_dx * 2.0f; // +x 반사
 
-                    if (unit[unit_num].x > b_x)
+                    if (unit[unit_num].x > b_x) // 반사 불가 상황
                     {
                         unit[unit_num].x = b_x;
+                    }
+                    else if (unit[unit_num].x < -b_x) // 과다 반사 상황
+                    {
+                        unit[unit_num].x = -b_x;
                     }
                 }
                 else if (unit[unit_num].x < -b_x) // -x 초과
                 {
                     unit[unit_num].x += rand_dx * 2.0f; // -x 반사
 
-                    if (unit[unit_num].x < -b_x)
+                    if (fabs(unit[unit_num].x) > b_x) // 반사 불가 상황
                     {
                         unit[unit_num].x = -b_x;
+                    }
+                    else if (unit[unit_num].x > b_x) // 과다 반사 상황
+                    {
+                        unit[unit_num].x = b_x;
                     }
                 }
 
@@ -96,18 +104,26 @@ namespace Ideal
                 {
                     unit[unit_num].y -= rand_dy * 2.0f; // +y 반사
 
-                    if (unit[unit_num].y > b_y)
+                    if (unit[unit_num].y > b_y) // 반사 불가 상황
                     {
                         unit[unit_num].y = b_y;
+                    }
+                    else if (unit[unit_num].y < -b_y) // 과다 반사 상황
+                    {
+                        unit[unit_num].y = -b_y;
                     }
                 }
                 else if (unit[unit_num].y < -b_y) // -y 초과
                 {
                     unit[unit_num].y += rand_dy * 2.0f; // -y 반사
 
-                    if (unit[unit_num].y < -b_y)
+                    if (unit[unit_num].y < -b_y) // 반사 불가 상황
                     {
                         unit[unit_num].y = -b_y;
+                    }
+                    else if (unit[unit_num].y > b_y) // 과다 반사 상황
+                    {
+                        unit[unit_num].y = b_y;
                     }
                 }
             }
