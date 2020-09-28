@@ -89,13 +89,23 @@ namespace controls
 
     void mouse_button(int button, int state, int x, int y)
     {
-        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) // 클릭 시 마우스 위치 저장
+        if (clicked == 0 && button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) // 클릭 시 마우스 위치 저장
         {
             clicked = 1;
             mouse_x = x;
             mouse_y = y;
         }
         else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+        {
+            clicked = 0;
+        }
+        else if (clicked == 0 && button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+        {
+            clicked = 2;
+            mouse_x = x;
+            mouse_y = y;
+        }
+        else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
         {
             clicked = 0;
         }
@@ -111,6 +121,22 @@ namespace controls
             // 현재 위치 저장
             mouse_x = x;
             mouse_y = y;
+        }
+        else if (clicked == 2)
+        {
+            int dx = x - mouse_x;
+            int dy = y - mouse_y;
+            double idx = (double)mouse_x - (double)viewX;
+            double idy = (double)mouse_y - (double)viewY;
+            double fdx = (double)x - (double)viewX;
+            double fdy = (double)y - (double)viewY;
+
+            double ids = idx * idx + idy * idy;
+            double fds = fdx * fdx + fdy * fdy;
+            double id = sqrt(ids);
+            double fd = sqrt(fds);
+
+            double acos();
         }
     }
 
