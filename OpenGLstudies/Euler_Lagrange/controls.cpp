@@ -3,12 +3,18 @@
 // 좌표
 float viewX = 0.0f;
 float viewY = 0.0f;
-float viewZ = -4.0f;
+float viewZ = -6.0f;
 
 // 회전
 float pitch = 0.0f;
 float yaw = 0.0f;
 float roll = 0.0f;
+
+int clicked = 0;
+int mouse_x = 0;
+int mouse_y = 0;
+int x_move = 0;
+int y_move = 0;
 
 namespace controls
 {
@@ -28,27 +34,27 @@ namespace controls
         }
         else if (key == 'q')
         {
-            roll += 1.0f; // z+회전 (좌회전)
+            roll -= 1.0f; // z+회전 (좌회전)
         }
         else if (key == 'e')
         {
-            roll -= 1.0f; // z-회전 (우회전)
+            roll += 1.0f; // z-회전 (우회전)
         }
         else if (key == 'w')
         {
-            viewY += 0.01f; // 상
+            viewY -= 0.01f; // 상
         }
         else if (key == 's')
         {
-            viewY -= 0.01f; // 하
+            viewY += 0.01f; // 하
         }
         else if (key == 'd')
         {
-            viewX += 0.01f; // 우
+            viewX -= 0.01f; // 우
         }
         else if (key == 'a')
         {
-            viewX -= 0.01f; // 좌
+            viewX += 0.01f; // 좌
         }
     }
 
@@ -70,11 +76,53 @@ namespace controls
         {
             yaw -= 1.0f; // 회전
         }
-        else if (key == GLUT_KEY_HOME) // 회전 초기화
+        else if (key == GLUT_KEY_HOME) // 뷰 초기화
         {
+            viewX = 0.0f;
+            viewY = 0.0f;
+            viewZ = -6.0f;
             pitch = 0.0f;
             yaw = 0.0f;
             roll = 0.0f;
+        }
+    }
+
+    void mouse_button(int button, int state, int x, int y)
+    {
+        if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) // 클릭 시 마우스 위치 저장
+        {
+            clicked = 1;
+            mouse_x = x;
+            mouse_y = y;
+        }
+        else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP)
+        {
+            clicked = 0;
+        }
+    }
+
+    void mouse_drag(int x, int y)
+    {
+        if (clicked == 1)
+        {
+            // 이전 위치에서의 차이만큼 뷰 이동
+            viewX += (float)(x - mouse_x) / 200.0f;
+            viewY -= (float)(y - mouse_y) / 200.0f;
+            // 현재 위치 저장
+            mouse_x = x;
+            mouse_y = y;
+        }
+    }
+
+    void mouse_wheel(int button, int dir, int x, int y) // 마우스 휠
+    {
+        if (dir > 0)
+        {
+            viewZ += 0.1f; // 확대
+        }
+        else if (dir < 0)
+        {
+            viewZ -= 0.1f; // 축소
         }
     }
 
