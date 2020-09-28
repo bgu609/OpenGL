@@ -1,17 +1,17 @@
 #include "controls.h"
 
+// 좌표
+float viewX = 0.0f;
+float viewY = 0.0f;
+float viewZ = -4.0f;
+
+// 회전
+float pitch = 0.0f;
+float yaw = 0.0f;
+float roll = 0.0f;
+
 namespace controls
 {
-    // 좌표
-    float viewX = 0.0f;
-    float viewY = 0.0f;
-    float viewZ = 0.0f;
-
-    // 회전
-    float pitch = 0.0f;
-    float yaw = 0.0f;
-    float roll = 0.0f;
-
     void keyboard(unsigned char key, int x, int y)
     {
         if (key == 27)  // esc로 종료
@@ -52,7 +52,7 @@ namespace controls
         }
     }
 
-    void special(int key, int x, int y)
+    void special_key(int key, int x, int y)
     {
         if (key == GLUT_KEY_DOWN)
         {
