@@ -2,6 +2,10 @@
 
 using namespace controls;
 
+// 윈도우
+extern int win_width;
+extern int win_height;
+
 // 좌표
 extern float viewX;
 extern float viewY;
@@ -179,7 +183,7 @@ namespace graphics
 	void draw()
 	{
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); //더블 버퍼와 깊이 버퍼를 사용하도록 설정, GLUT_RGB=0x00임 (3d 옵션)
-		glutInitWindowSize(500, 500);
+		glutInitWindowSize(win_width, win_height);
 		glutInitWindowPosition(300, 300);
 		glutCreateWindow("OpenGL EL");
 

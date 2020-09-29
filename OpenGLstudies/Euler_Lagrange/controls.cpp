@@ -1,5 +1,9 @@
 #include "controls.h"
 
+// 윈도우
+int win_width = 500;
+int win_height = 500;
+
 // 좌표
 float viewX = 0.0f;
 float viewY = 0.0f;
@@ -99,7 +103,7 @@ namespace controls
         {
             clicked = 0;
         }
-        else if (clicked == 0 && button == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+        else if (clicked == 0 && button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
         {
             clicked = 2;
             mouse_x = x;
@@ -116,27 +120,38 @@ namespace controls
         if (clicked == 1)
         {
             // 이전 위치에서의 차이만큼 뷰 이동
-            viewX += (float)(x - mouse_x) / 200.0f;
-            viewY -= (float)(y - mouse_y) / 200.0f;
+            viewX += (float)(x - mouse_x) / 100.0f;
+            viewY -= (float)(y - mouse_y) / 100.0f;
             // 현재 위치 저장
             mouse_x = x;
             mouse_y = y;
         }
         else if (clicked == 2)
         {
-            int dx = x - mouse_x;
-            int dy = y - mouse_y;
-            double idx = (double)mouse_x - (double)viewX;
-            double idy = (double)mouse_y - (double)viewY;
-            double fdx = (double)x - (double)viewX;
-            double fdy = (double)y - (double)viewY;
+            // 윈도우의 중앙을 기준으로 init, final 벡터
+            double idx = (double)mouse_x - (double)(win_width / 2); double idy = (double)mouse_y - (double)(win_height / 2);
+            double fdx = (double)x - (double)(win_width / 2); double fdy = (double)y - (double)(win_height / 2);
 
-            double ids = idx * idx + idy * idy;
-            double fds = fdx * fdx + fdy * fdy;
-            double id = sqrt(ids);
-            double fd = sqrt(fds);
+            // 두 벡터 크기 (여기서 방향 정보가 소실됨, -부호를 잃음)
+            double id = sqrt(idx * idx + idy * idy);
+            double fd = sqrt(fdx * fdx + fdy * fdy);
 
-            double acos();
+            double scalar_product = idx * fdx + idy * fdy; // 내적
+            double cross_product = idx * fdy - idy * fdx; // 외적
+            double rotate_angle = acos(scalar_product / (id * fd)); // 내적으로부터 변화각 계산
+
+            // 외적 방향에 따라 변화각만큼 회전
+            if ((cross_product) > 0)
+            {
+                roll -= (float)rotate_angle * 50.0f;
+            }
+            else if ((cross_product) < 0)
+            {
+                roll += (float)rotate_angle * 50.0f;
+            }
+            // 현재 위치 저장
+            mouse_x = x;
+            mouse_y = y;
         }
     }
 
@@ -144,11 +159,11 @@ namespace controls
     {
         if (dir > 0)
         {
-            viewZ += 0.1f; // 확대
+            viewZ += 0.5f; // 확대
         }
         else if (dir < 0)
         {
-            viewZ -= 0.1f; // 축소
+            viewZ -= 0.5f; // 축소
         }
     }
 
@@ -159,6 +174,9 @@ namespace controls
 
         //변경된 윈도우크기로 viewport를 설정한다.
         glViewport(0, 0, width, height);
+
+        win_width = width;
+        win_height = height;
 
         glMatrixMode(GL_PROJECTION);  //뒤에 오는 계산들은 Projection matrix에 영향을 주도록 설정
         glLoadIdentity();             //projection matrix 초기화
@@ -182,6 +200,9 @@ namespace controls
 
         //변경된 윈도우크기로 viewport를 설정한다.
         glViewport(0, 0, width, height);
+
+        win_width = width;
+        win_height = height;
 
         glMatrixMode(GL_PROJECTION);  //뒤에 오는 계산들은 Projection matrix에 영향을 주도록 설정
         glLoadIdentity();             //projection matrix 초기화
