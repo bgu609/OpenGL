@@ -5,6 +5,7 @@
 #include <math.h>
 #include <iostream>
 #include "gl/freeglut.h"
+#include "physics.h"
 
 namespace controls
 {

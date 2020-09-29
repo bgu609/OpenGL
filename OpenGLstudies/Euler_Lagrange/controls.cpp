@@ -128,17 +128,9 @@ namespace controls
         }
         else if (clicked == 2)
         {
-            // 윈도우의 중앙을 기준으로 init, final 벡터
-            double idx = (double)mouse_x - (double)(win_width / 2); double idy = (double)mouse_y - (double)(win_height / 2);
-            double fdx = (double)x - (double)(win_width / 2); double fdy = (double)y - (double)(win_height / 2);
-
-            // 두 벡터 크기 (여기서 방향 정보가 소실됨, -부호를 잃음)
-            double id = sqrt(idx * idx + idy * idy);
-            double fd = sqrt(fdx * fdx + fdy * fdy);
-
-            double scalar_product = idx * fdx + idy * fdy; // 내적
-            double cross_product = idx * fdy - idy * fdx; // 외적
-            double rotate_angle = acos(scalar_product / (id * fd)); // 내적으로부터 변화각 계산
+            double scalar_product = physics::scalar_product((double)(win_width / 2), (double)(win_height / 2), mouse_x, mouse_y, x, y); // 내적
+            double cross_product = physics::cross_product((double)(win_width / 2), (double)(win_height / 2), mouse_x, mouse_y, x, y); // 외적
+            double rotate_angle = physics::scalar_angle((double)(win_width / 2), (double)(win_height / 2), mouse_x, mouse_y, x, y); // 내적으로부터 변화각 계산
 
             // 외적 방향에 따라 변화각만큼 회전
             if ((cross_product) > 0)
