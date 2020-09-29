@@ -1,8 +1,10 @@
 #include "controls.h"
 
 // 윈도우
-int win_width = 500;
-int win_height = 500;
+int win_width = 800;
+int win_height = 800;
+int win_x = 400;
+int win_y = 100;
 
 // 좌표
 float viewX = 0.0f;
@@ -80,14 +82,11 @@ namespace controls
         {
             yaw -= 1.0f; // 회전
         }
-        else if (key == GLUT_KEY_HOME) // 뷰 초기화
+        else if (key == GLUT_KEY_HOME) // 뷰 원위치
         {
             viewX = 0.0f;
             viewY = 0.0f;
             viewZ = -6.0f;
-            pitch = 0.0f;
-            yaw = 0.0f;
-            roll = 0.0f;
         }
     }
 

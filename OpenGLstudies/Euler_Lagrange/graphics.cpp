@@ -5,6 +5,8 @@ using namespace controls;
 // 윈도우
 extern int win_width;
 extern int win_height;
+extern int win_x;
+extern int win_y;
 
 // 좌표
 extern float viewX;
@@ -19,46 +21,46 @@ extern float roll;
 namespace graphics
 {
     float scale_area = 5.0f; // scale_map을 그릴 범위
-	int scale_conver = 20; // scale_map 분할 단위, 높을수록 세분화, 1.0f == 0~20
-    int scale_count = (int)scale_area * scale_conver; // scale_map 범위에 따른 보정
+	double scale_conver = 20; // scale_map 분할 단위, 높을수록 세분화, 1.0f == 0~20
+    int scale_count = (int)scale_area * (int)scale_conver; // scale_map 범위에 따른 보정
 
-    double surface = 3.0 / (double)scale_conver;
+    double surface = 3.0 / scale_conver;
 
 	float xs[] = { 0, 1, -2, 3, -4, -5, 6, -7, 8, 19 };
 	float ys[] = { 0, 15, 8, 5, -10, 10, -5, 2, 10, 19 };
 
-	//void path()
-	//{
-	//	glColor3f(0.0f, 0.0f, 1.0f);
+	void path()
+	{
+		glColor3f(0.0f, 0.0f, 1.0f);
 
-	//	for (int i = 1; i < 10; i++)
-	//	{
-	//		glBegin(GL_LINE_STRIP);
-	//		glVertex2f((float)xs[i-1] / (float)scale_conver, (float)ys[i-1] / (float)scale_conver);
-	//		glVertex2f((float)xs[i] / (float)scale_conver, (float)ys[i] / (float)scale_conver);
-	//		glEnd();
-	//	}
-	//}
+		for (int i = 1; i < 10; i++)
+		{
+			glBegin(GL_LINE_STRIP);
+			glVertex2f((float)xs[i-1] / (float)scale_conver, (float)ys[i-1] / (float)scale_conver);
+			glVertex2f((float)xs[i] / (float)scale_conver, (float)ys[i] / (float)scale_conver);
+			glEnd();
+		}
+	}
 
-	//void nodes() // polygon 생성
-	//{
-	//	glColor3f(1.0f, 0.0f, 0.0f);
+	void nodes() // polygon 생성
+	{
+		glColor3f(1.0f, 0.0f, 0.0f);
 
-	//	float rx = 0.0f;
-	//	float ry = 0.0f;
+		float rx = 0.0f;
+		float ry = 0.0f;
 
-	//	for (int j = 0; j < 10; j++)
-	//	{
-	//		glBegin(GL_POLYGON);
-	//		for (int i = 0; i < 360; i++)
-	//		{
-	//			rx = xs[j] / (float)scale_conver + 0.05f * (float)(cos(i * M_PI / 180) / 4); // 4 나눈 건 그래픽 표현 보정치
-	//			ry = ys[j] / (float)scale_conver + 0.05f * (float)(sin(i * M_PI / 180) / 4); // 4 나눈 건 그래픽 표현 보정치
-	//			glVertex2f(rx, ry);
-	//		}
-	//		glEnd();
-	//	}
-	//}
+		for (int j = 0; j < 10; j++)
+		{
+			glBegin(GL_POLYGON);
+			for (int i = 0; i < 360; i++)
+			{
+				rx = xs[j] / (float)scale_conver + 0.05f * (float)(cos(i * M_PI / 180) / 4); // 4 나눈 건 그래픽 표현 보정치
+				ry = ys[j] / (float)scale_conver + 0.05f * (float)(sin(i * M_PI / 180) / 4); // 4 나눈 건 그래픽 표현 보정치
+				glVertex2f(rx, ry);
+			}
+			glEnd();
+		}
+	}
 
 	void object_marking(double x, double y) // 물체 좌표 마킹
 	{
@@ -67,13 +69,13 @@ namespace graphics
 		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
 
 		glBegin(GL_LINE_STRIP);
-		glVertex3d((x - 1.0) / (double)scale_conver, y / (double)scale_conver, 0);
-		glVertex3d((x + 1.0) / (double)scale_conver, y / (double)scale_conver, 0);
+		glVertex3d((x - 1.0) / scale_conver, y / scale_conver, 0);
+		glVertex3d((x + 1.0) / scale_conver, y / scale_conver, 0);
 		glEnd();
 
 		glBegin(GL_LINE_STRIP);
-		glVertex3d(x / (double)scale_conver, (y - 1.0) / (double)scale_conver, 0);
-		glVertex3d(x / (double)scale_conver, (y + 1.0) / (double)scale_conver, 0);
+		glVertex3d(x / scale_conver, (y - 1.0) / scale_conver, 0);
+		glVertex3d(x / scale_conver, (y + 1.0) / scale_conver, 0);
 		glEnd();
 
 		glDepthFunc(GL_LESS);
@@ -84,10 +86,10 @@ namespace graphics
         glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
 
         glBegin(GL_QUADS);
-        glVertex3d((x - size / 2.0) / (double)scale_conver, (y - size / 2.0) / (double)scale_conver, deep);
-        glVertex3d((x - size / 2.0) / (double)scale_conver, (y + size / 2.0) / (double)scale_conver, deep);
-        glVertex3d((x + size / 2.0) / (double)scale_conver, (y + size / 2.0) / (double)scale_conver, deep);
-        glVertex3d((x + size / 2.0) / (double)scale_conver, (y - size / 2.0) / (double)scale_conver, deep);
+        glVertex3d((x - size / 2.0) / scale_conver, (y - size / 2.0) / scale_conver, deep);
+        glVertex3d((x - size / 2.0) / scale_conver, (y + size / 2.0) / scale_conver, deep);
+        glVertex3d((x + size / 2.0) / scale_conver, (y + size / 2.0) / scale_conver, deep);
+        glVertex3d((x + size / 2.0) / scale_conver, (y - size / 2.0) / scale_conver, deep);
         glEnd();
 
 		object_marking(x, y);
@@ -95,20 +97,65 @@ namespace graphics
 
 	void polygon(double x, double y, double z, double deep)
 	{
+		double rx = 0.0;
+		double ry = 0.0;
 		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 
 		glBegin(GL_POLYGON);
-		glVertex3d((x - 1.0) / (double)scale_conver, y / (double)scale_conver, deep / (double)scale_conver);
-		glVertex3d((x + 1.0) / (double)scale_conver, y / (double)scale_conver, deep / (double)scale_conver);
-		glVertex3d((x + 0.5) / (double)scale_conver, y / (double)scale_conver, (z + deep) / (double)scale_conver);
-		glVertex3d((x - 0.5) / (double)scale_conver, y / (double)scale_conver, (z + deep) / (double)scale_conver);
+		for (int i = 0; i < 360; i++)
+		{
+			rx = (double)(x + 1.0 * cos(i * M_PI / 180));
+			ry = (double)(y + 1.0 * sin(i * M_PI / 180));
+			glVertex3d(rx / scale_conver, ry / scale_conver, deep / scale_conver);
+		}
 		glEnd();
 
+		for (int i = 0; i < 360; i++)
+		{
+			if (i % 2 == 0)
+			{
+				glBegin(GL_POLYGON);
+				rx = (double)(x + 1.0 * cos(i * M_PI / 180));
+				ry = (double)(y + 1.0 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, deep / scale_conver);
+				rx = (double)(x + 0.8 * cos(i * M_PI / 180));
+				ry = (double)(y + 0.8 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, (z * 0.3 + deep) / scale_conver);
+				rx = (double)(x + 0.6 * cos(i * M_PI / 180));
+				ry = (double)(y + 0.6 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, (z * 0.7 + deep) / scale_conver);
+				rx = (double)(x + 0.5 * cos(i * M_PI / 180));
+				ry = (double)(y + 0.5 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, (z + deep) / scale_conver);
+			}
+			else if (i % 2 == 1)
+			{
+				rx = (double)(x + 0.5 * cos(i * M_PI / 180));
+				ry = (double)(y + 0.5 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, (z + deep) / scale_conver);
+				rx = (double)(x + 0.6 * cos(i * M_PI / 180));
+				ry = (double)(y + 0.6 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, (z * 0.7 + deep) / scale_conver);
+				rx = (double)(x + 0.8 * cos(i * M_PI / 180));
+				ry = (double)(y + 0.8 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, (z * 0.3 + deep) / scale_conver);
+				rx = (double)(x + 1.0 * cos(i * M_PI / 180));
+				ry = (double)(y + 1.0 * sin(i * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, deep / scale_conver);
+				rx = (double)(x + 1.0 * cos((i - 1.0) * M_PI / 180));
+				ry = (double)(y + 1.0 * sin((i - 1.0) * M_PI / 180));
+				glVertex3d(rx / scale_conver, ry / scale_conver, deep / scale_conver);
+				glEnd();
+			}
+		}
+
 		glBegin(GL_POLYGON);
-		glVertex3d(x / (double)scale_conver, (y - 1.0) / (double)scale_conver, deep / (double)scale_conver);
-		glVertex3d(x / (double)scale_conver, (y + 1.0) / (double)scale_conver, deep / (double)scale_conver);
-		glVertex3d(x / (double)scale_conver, (y + 0.5) / (double)scale_conver, (z + deep) / (double)scale_conver);
-		glVertex3d(x / (double)scale_conver, (y - 0.5) / (double)scale_conver, (z + deep) / (double)scale_conver);
+		for (int i = 0; i < 360; i++)
+		{
+			rx = (double)(x + 0.5 * cos(i * M_PI / 180));
+			ry = (double)(y + 0.5 * sin(i * M_PI / 180));
+			glVertex3d(rx / scale_conver, ry / scale_conver, (z + deep) / scale_conver);
+		}
 		glEnd();
 
 		object_marking(x, y);
@@ -168,7 +215,9 @@ namespace graphics
 		glEnable(GL_BLEND); // 블렌딩 적용
         // 오브젝트 - 좌표 - water 순서로 맞춰야 의도대로 표현됨(블렌딩)....
         
-        sq_object(2.0, 5.0, 4.0, surface + 0.01);
+		nodes();
+		path();
+        sq_object(19.0, 19.0, 4.0, surface + 0.01);
 		sq_object(0.0, 0.0, 4.0, -1.0);
 		polygon(-10.0, 0.0, 7.0, -2.0);
 
@@ -184,7 +233,7 @@ namespace graphics
 	{
         glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH); //더블 버퍼와 깊이 버퍼를 사용하도록 설정, GLUT_RGB=0x00임 (3d 옵션)
 		glutInitWindowSize(win_width, win_height);
-		glutInitWindowPosition(300, 300);
+		glutInitWindowPosition(win_x, win_y);
 		glutCreateWindow("OpenGL EL");
 
 		glutDisplayFunc(display);
