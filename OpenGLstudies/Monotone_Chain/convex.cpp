@@ -18,16 +18,16 @@ namespace Convex
 		float y;
 	};
 
+	// 좌표 구조체
 	struct xy {
 		float x;
 		float y;
+		bool chain;
 	};
 
 	// 샘플 좌표 (UNIT_NUM 10 기준)
 	// float x_array[UNIT_NUM] = { -0.9f, -0.8f, -0.75f, -0.68f, -0.52f, -0.29f, 0.11f, 0.23f, 0.38f, 0.6f };
 	// float y_array[UNIT_NUM] = { 0.0f, 0.8f, -0.3f, 0.2f, 0.1f, -0.4f, 0.25f, 0.51f, -0.15f, 0.0f };
-	// bool convex_array_f[UNIT_NUM] = { true, true, true, true, true, true, true, true, true, true };
-	// bool convex_array_b[UNIT_NUM] = { true, true, true, true, true, true, true, true, true, true };
 
 	bool monotone_chain[UNIT_NUM];
 	xy xy_array[UNIT_NUM];
@@ -90,6 +90,7 @@ namespace Convex
 			rand_y = (float)rand_r * (float)sin(rand_th * M_PI / 180) / scale;
 			xy_array[i].x = rand_x;
 			xy_array[i].y = rand_y;
+			xy_array[i].chain = true;
 			// (x, y)에 그리기
 			glVertex2f(rand_x, rand_y);
 			glEnd();
@@ -102,6 +103,7 @@ namespace Convex
 		for (int i = 0; i < UNIT_NUM; i++)
 		{
 			monotone_chain[i] = true;
+			xy_array[i].chain = true;
 		}
 	}
 
@@ -128,18 +130,47 @@ namespace Convex
 	}
 
 	// 모노톤 검사
-	// 검사 스택 3 = 벡터 3개 ( 이 갯수가 정밀도? 랑 연관있는건가 )
+	// 검사 스택 4 = 벡터 3개 ( 이 갯수가 정밀도? 랑 연관있는건가 )
 	// 지금은 사실 큐처럼 사용 중이긴 함. 원래는 convex hull 포함되는거는 스택에서 절대 내보내면 안되는듯?
 	void monotone(bool forward)
 	{
 		monotone_set();
 
+		int stack[UNIT_NUM];
+		int stack_count = 0;
+
 		if (forward)
 		{
-			int start = 0; int first = 1; int second = 2; int end = 3;
-
-			while (end < UNIT_NUM)
+			for (int i = 0; i < UNIT_NUM; i++)
 			{
+				if (xy_array[i].chain)
+				{
+					stack[stack_count] = i;
+					stack_count++;
+				}
+			}
+
+			int start = 0; int middle = 1; int end = 2;
+
+			while (end < stack_count)
+			{
+				float cross = cross_product(start, middle, end);
+
+				if (cross < 0)
+				{
+					monotone_chain[middle] = false;
+					xy_array[middle].chain = false;
+					middle = end;
+					end++;
+				}
+				else
+				{
+					start = middle;
+					middle = end;
+					end++;
+				} // 이 방식을 기본으로 하고 정밀도를 높이면 이 검사를 더 반복하는 방법으로 convex에 가깝게 만들 것
+
+				/*
 				float cross1 = cross_product(start, first, second);
 				float cross2 = cross_product(first, second, end);
 
@@ -163,6 +194,7 @@ namespace Convex
 					second = end;
 					end = end + 1;
 				}
+				*/
 			}
 		}
 		else
@@ -177,6 +209,7 @@ namespace Convex
 				if (cross1 < 0)
 				{
 					monotone_chain[first] = false;
+					xy_array[first].chain = false;
 					first = second;
 					second = end;
 					end = end - 1;
@@ -197,84 +230,6 @@ namespace Convex
 			}
 		}
 	}
-	/*
-	// 벡터 회전방향 검사 ( 벡터 3개를 가지고 검사해야 함 )
-	void vector_rotate()
-	{
-		int start = 0;
-		int judge = 1;
-		int next = 2;
-		int end = 3;
-
-		while (end < UNIT_NUM)
-		{
-			float vx1 = x_array[judge] - x_array[start]; float vy1 = y_array[judge] - y_array[start];
-			float vx2 = x_array[next] - x_array[judge]; float vy2 = y_array[next] - y_array[judge];
-			float vx3 = x_array[end] - x_array[next]; float vy3 = y_array[end] - y_array[next];
-
-			float cross12 = vx1 * vy2 - vx2 * vy1;
-			float cross23 = vx2 * vy3 - vx3 * vy2;
-
-			if (cross12 < 0)
-			{
-				convex_array_f[judge] = false;
-				judge = next;
-				next = end;
-				end = end + 1;
-			}
-			else if (cross23 < 0)
-			{
-				convex_array_f[next] = false;
-				next = end;
-				end = end + 1;
-			}
-			else
-			{
-				convex_array_f[judge] = true;
-				start = judge;
-				judge = next;
-				next = end;
-				end = end + 1;
-			}
-		}
-
-		start = UNIT_NUM - 1;
-		judge = UNIT_NUM - 2;
-		next = UNIT_NUM - 3;
-		end = UNIT_NUM - 4;
-
-		while (end >= 0)
-		{
-			float vx1 = x_array[judge] - x_array[start]; float vy1 = y_array[judge] - y_array[start];
-			float vx2 = x_array[next] - x_array[judge]; float vy2 = y_array[next] - y_array[judge];
-			float vx3 = x_array[end] - x_array[next]; float vy3 = y_array[end] - y_array[next];
-
-			float cross12 = vx1 * vy2 - vx2 * vy1;
-			float cross23 = vx2 * vy3 - vx3 * vy2;
-
-			if (cross12 < 0)
-			{
-				convex_array_b[judge] = false;
-				judge = next;
-				next = end;
-				end = end - 1;
-			}
-			else if (cross23 < 0)
-			{
-				convex_array_b[next] = false;
-				next = end;
-				end = end - 1;
-			}
-			else
-			{
-				convex_array_b[judge] = true;
-				start = judge;
-				judge = next;
-				next = end;
-				end = end - 1;
-			}
-		}
-	}*/
 
 	void check_line()
 	{
@@ -304,18 +259,6 @@ namespace Convex
 			}
 		}
 		glEnd();
-
-		/*// 선
-		glColor3f(0.0f, 0.0f, 1.0f);
-		glBegin(GL_LINE_STRIP);
-		for (int i = UNIT_NUM - 1; i >= 0; i--)
-		{
-			if (convex_array_b[i])
-			{
-				glVertex2f(x_array[i], y_array[i]);
-			}
-		}
-		glEnd();*/
 	}
 
 	// unit point
@@ -336,11 +279,7 @@ namespace Convex
 	{
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 클리어 컬러
 		glClear(GL_COLOR_BUFFER_BIT);
-		/*
-		for (int i = 0; i < UNIT_NUM; i++)
-		{
-			unit_point(x_array[i], y_array[i]);
-		}*/
+		
 
 		random_point();
 		selection_sort();
@@ -364,7 +303,7 @@ namespace Convex
 	void draw()
 	{
 		glutInitWindowSize(1000, 1000);
-		glutInitWindowPosition(100, 100);
+		glutInitWindowPosition(100, 50);
 		glutCreateWindow("OpenGL Monotone Chain");
 
 		glutDisplayFunc(display);
