@@ -2,6 +2,7 @@
 
 #define UNIT_NUM 50
 #define RANDOM_DIS 100
+#define CHECK_NUM 50
 
 using namespace std;
 
@@ -129,108 +130,6 @@ namespace Convex
 		return cross;
 	}
 
-	// 모노톤 검사
-	// 검사 스택 4 = 벡터 3개 ( 이 갯수가 정밀도? 랑 연관있는건가 )
-	// 지금은 사실 큐처럼 사용 중이긴 함. 원래는 convex hull 포함되는거는 스택에서 절대 내보내면 안되는듯?
-	void monotone(bool forward)
-	{
-		monotone_set();
-
-		int stack[UNIT_NUM];
-		int stack_count = 0;
-
-		if (forward)
-		{
-			for (int i = 0; i < UNIT_NUM; i++)
-			{
-				if (xy_array[i].chain)
-				{
-					stack[stack_count] = i;
-					stack_count++;
-				}
-			}
-
-			int start = 0; int middle = 1; int end = 2;
-
-			while (end < stack_count)
-			{
-				float cross = cross_product(start, middle, end);
-
-				if (cross < 0)
-				{
-					monotone_chain[middle] = false;
-					xy_array[middle].chain = false;
-					middle = end;
-					end++;
-				}
-				else
-				{
-					start = middle;
-					middle = end;
-					end++;
-				} // 이 방식을 기본으로 하고 정밀도를 높이면 이 검사를 더 반복하는 방법으로 convex에 가깝게 만들 것
-
-				/*
-				float cross1 = cross_product(start, first, second);
-				float cross2 = cross_product(first, second, end);
-
-				if (cross1 < 0)
-				{
-					monotone_chain[first] = false;
-					first = second;
-					second = end;
-					end = end + 1;
-				}
-				else if (cross2 < 0)
-				{
-					monotone_chain[second] = false;
-					second = end;
-					end = end + 1;
-				}
-				else
-				{
-					start = first;
-					first = second;
-					second = end;
-					end = end + 1;
-				}
-				*/
-			}
-		}
-		else
-		{
-			int start = UNIT_NUM - 1; int first = UNIT_NUM - 2; int second = UNIT_NUM - 3; int end = UNIT_NUM - 4;
-
-			while (end >= 0)
-			{
-				float cross1 = cross_product(start, first, second);
-				float cross2 = cross_product(first, second, end);
-
-				if (cross1 < 0)
-				{
-					monotone_chain[first] = false;
-					xy_array[first].chain = false;
-					first = second;
-					second = end;
-					end = end - 1;
-				}
-				else if (cross2 < 0)
-				{
-					monotone_chain[second] = false;
-					second = end;
-					end = end - 1;
-				}
-				else
-				{
-					start = first;
-					first = second;
-					second = end;
-					end = end - 1;
-				}
-			}
-		}
-	}
-
 	void check_line()
 	{
 		// 순방향 검사 경로
@@ -275,6 +174,92 @@ namespace Convex
 		glEnd();
 	}
 
+	// 모노톤 검사
+	// 검사 스택 4 = 벡터 3개 ( 이 갯수가 정밀도? 랑 연관있는건가 )
+	// 지금은 사실 큐처럼 사용 중이긴 함. 원래는 convex hull 포함되는거는 스택에서 절대 내보내면 안되는듯?
+	void monotone()
+	{
+		int stack[UNIT_NUM];
+		int stack_count;
+		int start, middle, end;
+
+		monotone_set();
+
+		for (int i = 0; i < CHECK_NUM; i++)
+		{
+			stack_count = 0;
+			for (int j = 0; j < UNIT_NUM; j++)
+			{
+				if (xy_array[j].chain)
+				{
+					stack[stack_count] = j;
+					stack_count++;
+				}
+			}
+
+			start = 0; middle = 1; end = 2;
+
+			while (end < stack_count)
+			{
+				float cross = cross_product(stack[start], stack[middle], stack[end]);
+
+				if (cross < 0)
+				{
+					monotone_chain[stack[middle]] = false;
+					xy_array[stack[middle]].chain = false;
+					stack[middle] = stack[end];
+					stack[end] = stack[end++];
+				}
+				else
+				{
+					stack[start] = stack[middle];
+					stack[middle] = stack[end];
+					stack[end] = stack[end++];
+				}
+			}
+		}
+
+		unit_line(1.0f, 0.0f, 0.0f);
+
+		monotone_set();
+
+		for (int i = 0; i < CHECK_NUM; i++)
+		{
+			stack_count = 0;
+			for (int j = 0; j < UNIT_NUM; j++)
+			{
+				if (xy_array[j].chain)
+				{
+					stack[stack_count] = j;
+					stack_count++;
+				}
+			}
+
+			start = stack_count - 1; middle = stack_count - 2; end = stack_count - 3;
+
+			while (end >= 0)
+			{
+				float cross = cross_product(stack[start], stack[middle], stack[end]);
+
+				if (cross < 0)
+				{
+					monotone_chain[stack[middle]] = false;
+					xy_array[stack[middle]].chain = false;
+					stack[middle] = stack[end];
+					stack[end] = stack[end--];
+				}
+				else
+				{
+					stack[start] = stack[middle];
+					stack[middle] = stack[end];
+					stack[end] = stack[end--];
+				}
+			}
+		}
+
+		unit_line(0.0f, 0.0f, 1.0f);
+	}
+
 	void display()
 	{
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 클리어 컬러
@@ -282,17 +267,12 @@ namespace Convex
 		
 
 		random_point();
-		selection_sort();
 
-		//vector_rotate();
+		selection_sort();
 
 		check_line();
 
-		monotone(true);
-		unit_line(1.0f, 0.0f, 0.0f);
-		
-		monotone(false);
-		unit_line(0.0f, 0.0f, 1.0f);
+		monotone();
 
 		//glFlush();
 		glutSwapBuffers(); // 싱글 버퍼라면 버퍼에 있는 것을 화면에 출력
