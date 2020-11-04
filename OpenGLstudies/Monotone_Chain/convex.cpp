@@ -2,7 +2,7 @@
 
 #define UNIT_NUM 50
 #define RANDOM_DIS 100
-#define CHECK_NUM 50
+#define CHECK_NUM 2
 
 using namespace std;
 
@@ -26,12 +26,36 @@ namespace Convex
 		bool chain;
 	};
 
-	// 샘플 좌표 (UNIT_NUM 10 기준)
-	// float x_array[UNIT_NUM] = { -0.9f, -0.8f, -0.75f, -0.68f, -0.52f, -0.29f, 0.11f, 0.23f, 0.38f, 0.6f };
-	// float y_array[UNIT_NUM] = { 0.0f, 0.8f, -0.3f, 0.2f, 0.1f, -0.4f, 0.25f, 0.51f, -0.15f, 0.0f };
+	// 샘플 좌표 50
+	float x_array[UNIT_NUM] = {
+				0.28941f, 0.439397f, 0.515231f, -0.608676f, -0.719035f, -0.27297f, 0.39598f, -0.348569f, 0.338582f, -0.402379f,
+				-0.356486f, -0.913199f, 0.00906308f, 0.76587f, 0.907783f, -0.0789068f, 0.106984f, 0.758958f, 0.315f, -0.170193f,
+				-0.238396f, -0.610595f, 0.0526269f, 0.677162f, 0.26f, -0.153209f, -0.149909f, 0.325937f, -0.35105f, -0.620496f,
+				-0.00866025f, -0.391086f, -0.608589f, 0.0146541f, 0.13906f, 0.0138919f, 0.423205f, -0.761151f, -0.319454f, -0.692108f,
+				0.0644526f, -0.845723f, -0.529769f, -0.0398478f, 0.180611f, -0.385725f, -0.812215f, -0.0171034f, 0.679586f, 0.592006f
+	};
+	float y_array[UNIT_NUM] = {
+				0.111094f, -0.0230278f, -0.572222f, 0.197771f, 0.350697f, -0.454299f, 0.39598f, 0.536749f, 0.172516f, -0.431499f,
+				0.240453f, 0.261855f, -0.00422618f, 0.26371f, 0.063478f, -0.161783f, 0.132115f, 0.0397753f, -0.545596f, -0.0586023f,
+				-0.126757f, -0.381542f, -0.172135f, -0.40688f, -0.450333f, 0.128558f, -0.00523492f, 0.0516234f, -0.327359f, 0.520658f,
+				-0.005f, -0.246922f, 0.365677f, 0.279616f, 0.231435f, 0.0787846f, -0.582492f, -0.277036f, 0.240726f, 0.198459f,
+				0.303226f, 0.307818f, -0.281683f, 0.00348623f, 0.187028f, -0.231767f, 0.31178f, 0.979851f, -0.0237317f, 0.215473f
+	};
 
 	bool monotone_chain[UNIT_NUM];
 	xy xy_array[UNIT_NUM];
+
+	void sample_set()
+	{
+		glBegin(GL_POINTS);
+		for (int i = 0; i < UNIT_NUM; i++)
+		{
+			xy_array[i].x = x_array[i]; xy_array[i].y = y_array[i]; xy_array[i].chain = true;
+			// (x, y)에 그리기
+			glVertex2f(xy_array[i].x, xy_array[i].y);
+			glEnd();
+		}
+	}
 
 	// 선택 정렬
 	void selection_sort()
@@ -95,9 +119,9 @@ namespace Convex
 			// (x, y)에 그리기
 			glVertex2f(rand_x, rand_y);
 			glEnd();
-			cout << rand_x << ", " << rand_y << endl; // 좌표 추출용
+			// cout << rand_x << ", " << rand_y << endl; // 좌표 추출용
 		}
-		cout << endl; // 좌표 추출용
+		// cout << endl; // 좌표 추출용
 	}
 
 	// 모노톤 체인 초기화
@@ -157,6 +181,7 @@ namespace Convex
 			if (monotone_chain[i])
 			{
 				glVertex2f(xy_array[i].x, xy_array[i].y);
+				cout << "checked " << i << " : " << xy_array[i].x << ", " << xy_array[i].y << endl;
 			}
 		}
 		glEnd();
@@ -267,8 +292,8 @@ namespace Convex
 		glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // 클리어 컬러
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-
-		random_point();
+		//random_point();
+		sample_set();
 
 		selection_sort();
 
