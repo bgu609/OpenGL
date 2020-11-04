@@ -95,7 +95,9 @@ namespace Convex
 			// (x, y)에 그리기
 			glVertex2f(rand_x, rand_y);
 			glEnd();
+			cout << rand_x << ", " << rand_y << endl; // 좌표 추출용
 		}
+		cout << endl; // 좌표 추출용
 	}
 
 	// 모노톤 체인 초기화
