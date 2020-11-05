@@ -16,7 +16,7 @@ namespace Monotone_Console
                 -0.00866025f, -0.391086f, -0.608589f, 0.0146541f, 0.13906f, 0.0138919f, 0.423205f, -0.761151f, -0.319454f, -0.692108f,
                 0.0644526f, -0.845723f, -0.529769f, -0.0398478f, 0.180611f, -0.385725f, -0.812215f, -0.0171034f, 0.679586f, 0.592006f,
                 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
             };
@@ -33,23 +33,22 @@ namespace Monotone_Console
                 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
             };
 
-        static int MNT_NUM = 50;
+        //static int MNT_NUM = 50;
         //-----------------------------------------------------
 
         static void Main(string[] args)
         {
-            Convex_Hull();
+            Convex_Hull(sample_x, sample_y, true);
         }
 
         // convex hull 함수
         static void Convex_Hull()
         {
-            Stopwatch watch = new Stopwatch();
-
+            Stopwatch watch = new Stopwatch(); // 스탑워치
             int test_count = 50; // convex 검사 횟수
             bool close_chain = true; // 폐곡선 여부
 
-            List<XY> monotones = new List<XY>();
+            List<XY> monotones = new List<XY>(); // xy 리스트
             monotones = XY_extract(sample_x, sample_y); // 샘플 추출
 
             watch.Start(); // 시간 측정 시작
@@ -69,6 +68,35 @@ namespace Monotone_Console
                 Console.WriteLine("XY " + j + "\t:    " + monotones[j].x + "\t,    " + monotones[j].y);
             }
             Console.WriteLine("\n");
+        }
+        // convex hull 함수 (x 좌표 리스트, y 좌표 리스트, 폐곡선 여부), xy리스트 반환
+        static List<XY> Convex_Hull(List<float> x_list, List<float> y_list, bool close_chain)
+        {
+            Stopwatch watch = new Stopwatch(); // 스탑워치
+            int test_count = 50; // convex 검사 횟수
+
+            List<XY> monotones = new List<XY>(); // xy 리스트
+            monotones = XY_extract(x_list, y_list); // 샘플 추출
+
+            watch.Start(); // 시간 측정 시작
+            list_sort(ref monotones); // 얻어진 monotones 정렬
+            watch.Stop(); // 시간 측정 끝
+            Console.WriteLine("List Sorting Time : " + watch.ElapsedMilliseconds + "ms\n");
+
+            watch.Reset(); // 스탑워치 리셋
+
+            watch.Start(); // 시간 측정 시작
+            monotones = convex_test(ref monotones, close_chain, test_count); // convex 검사 후 정제된 monotones반환
+            watch.Stop(); // 시간 측정 끝
+            Console.WriteLine("Convex Test Time : " + watch.ElapsedMilliseconds + "ms\n");
+
+            for (int j = 0; j < monotones.Count; j++)
+            {
+                Console.WriteLine("XY " + j + "\t:    " + monotones[j].x + "\t,    " + monotones[j].y);
+            }
+            Console.WriteLine("\n");
+
+            return monotones;
         }
 
         // 2차원 좌표 구조체
@@ -108,7 +136,9 @@ namespace Monotone_Console
             XY insert; // 좌표 단위로 입력
             List<XY> extracts = new List<XY>();
 
-            for (int i = 0; i < MNT_NUM; i++)
+            int num = sample_x.Count; // x, y 리스트 길이 같다는 가정 하
+
+            for (int i = 0; i < num; i++)
             {
                 insert.x = sample_x[i]; insert.y = sample_y[i]; // 샘플에서 좌표 추출
                 extracts.Add(insert); // 좌표를 하나씩 입력
