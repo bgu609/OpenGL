@@ -2,7 +2,7 @@
 
 #define UNIT_NUM 50
 #define RANDOM_DIS 100
-#define CHECK_NUM 2
+#define CHECK_NUM 50
 
 using namespace std;
 
