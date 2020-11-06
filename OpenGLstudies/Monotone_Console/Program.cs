@@ -27,7 +27,7 @@ namespace Monotone_Console
                 -0.126757f, -0.381542f, -0.172135f, -0.40688f, -0.450333f, 0.128558f, -0.00523492f, 0.0516234f, -0.327359f, 0.520658f,
                 -0.005f, -0.246922f, 0.365677f, 0.279616f, 0.231435f, 0.0787846f, -0.582492f, -0.277036f, 0.240726f, 0.198459f,
                 0.303226f, 0.307818f, -0.281683f, 0.00348623f, 0.187028f, -0.231767f, 0.31178f, 0.979851f, -0.0237317f, 0.215473f,
-                0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+                0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
                 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -38,6 +38,17 @@ namespace Monotone_Console
 
         static void Main(string[] args)
         {
+            /*for (int i = 0; i < 1000; i++)
+            {
+                float u = 0.01f;
+
+                sample_x.Add(u * i);
+                sample_y.Add(u * i);
+            }*/
+
+            Console.WriteLine(sample_x.Count);
+            Console.WriteLine(sample_y.Count);
+
             Convex_Hull(sample_x, sample_y, true);
         }
 
@@ -48,8 +59,7 @@ namespace Monotone_Console
             int test_count = 50; // convex 검사 횟수
             bool close_chain = true; // 폐곡선 여부
 
-            List<XY> monotones = new List<XY>(); // xy 리스트
-            monotones = XY_extract(sample_x, sample_y); // 샘플 추출
+            List<XY> monotones = XY_extract(sample_x, sample_y); // 샘플 추출
 
             watch.Start(); // 시간 측정 시작
             list_sort(ref monotones); // 얻어진 monotones 정렬
@@ -73,10 +83,37 @@ namespace Monotone_Console
         static List<XY> Convex_Hull(List<float> x_list, List<float> y_list, bool close_chain)
         {
             Stopwatch watch = new Stopwatch(); // 스탑워치
-            int test_count = 50; // convex 검사 횟수
+            int test_count = 1000; // convex 검사 최대 횟수
 
-            List<XY> monotones = new List<XY>(); // xy 리스트
-            monotones = XY_extract(x_list, y_list); // 샘플 추출
+            List<XY> monotones = XY_extract(x_list, y_list); // 샘플 추출
+
+            watch.Start(); // 시간 측정 시작
+            list_sort(ref monotones); // 얻어진 monotones 정렬
+            watch.Stop(); // 시간 측정 끝
+            Console.WriteLine("List Sorting Time : " + watch.ElapsedMilliseconds + "ms\n");
+
+            watch.Reset(); // 스탑워치 리셋
+
+            watch.Start(); // 시간 측정 시작
+            monotones = convex_test(ref monotones, close_chain, test_count); // convex 검사 후 정제된 monotones반환
+            watch.Stop(); // 시간 측정 끝
+            Console.WriteLine("Convex Test Time : " + watch.ElapsedMilliseconds + "ms\n");
+
+            for (int j = 0; j < monotones.Count; j++)
+            {
+                Console.WriteLine("XY " + j + "\t:    " + monotones[j].x + "\t,    " + monotones[j].y);
+            }
+            Console.WriteLine("\n");
+
+            return monotones;
+        }
+        // convex hull 함수 (x 좌표 리스트, y 좌표 리스트, 폐곡선 여부), xy리스트 반환, double 좌표 input 대응
+        static List<dXY> Convex_Hull(List<double> x_list, List<double> y_list, bool close_chain)
+        {
+            Stopwatch watch = new Stopwatch(); // 스탑워치
+            int test_count = 1000; // convex 검사 최대 횟수
+
+            List<dXY> monotones = XY_extract(x_list, y_list); // 샘플 추출
 
             watch.Start(); // 시간 측정 시작
             list_sort(ref monotones); // 얻어진 monotones 정렬
@@ -105,11 +142,27 @@ namespace Monotone_Console
             public float x;
             public float y;
         }
+        // double input 대응
+        struct dXY
+        {
+            public double x;
+            public double y;
+        }
 
         // 벡터 생성 함수
         static XY vector_gen(ref List<XY> monotones, int start_idx, int end_idx)
         {
             XY vector;
+
+            vector.x = monotones[end_idx].x - monotones[start_idx].x;
+            vector.y = monotones[end_idx].y - monotones[start_idx].y;
+
+            return vector;
+        }
+        // double input 대응
+        static dXY vector_gen(ref List<dXY> monotones, int start_idx, int end_idx)
+        {
+            dXY vector;
 
             vector.x = monotones[end_idx].x - monotones[start_idx].x;
             vector.y = monotones[end_idx].y - monotones[start_idx].y;
@@ -124,6 +177,18 @@ namespace Monotone_Console
 
             XY v1 = vector_gen(ref monotones, start, middle);
             XY v2 = vector_gen(ref monotones, middle, end);
+
+            cross = (v1.x * v2.y) - (v1.y * v2.x);
+
+            return cross;
+        }
+        // double input 대응
+        static double cross_product(ref List<dXY> monotones, int start, int middle, int end)
+        {
+            double cross;
+
+            dXY v1 = vector_gen(ref monotones, start, middle);
+            dXY v2 = vector_gen(ref monotones, middle, end);
 
             cross = (v1.x * v2.y) - (v1.y * v2.x);
 
@@ -161,6 +226,22 @@ namespace Monotone_Console
 
             return extracts;
         }
+        // double input 대응
+        static List<dXY> XY_extract(List<double> x_list, List<double> y_list)
+        {
+            dXY insert; // 좌표 단위로 입력
+            List<dXY> extracts = new List<dXY>();
+
+            int num = x_list.Count; // x, y 리스트 길이 같다는 가정 하
+
+            for (int i = 0; i < num; i++)
+            {
+                insert.x = x_list[i]; insert.y = y_list[i]; // 샘플에서 좌표 추출
+                extracts.Add(insert); // 좌표를 하나씩 입력
+            }
+
+            return extracts;
+        }
 
         // 리스트 정렬 함수
         static void list_sort(ref List<XY> monotones)
@@ -168,6 +249,23 @@ namespace Monotone_Console
             monotones = monotones.Distinct().ToList();
 
             monotones.Sort(delegate (XY A, XY B)
+            {
+                if (A.x > B.x) return 1;
+                else if (A.x < B.x) return -1;
+                else if (A.x == B.x)
+                {
+                    if (A.y > B.y) return 1;
+                    else if (A.y < B.y) return -1;
+                }
+                return 0;
+            });
+        }
+        // double input 대응
+        static void list_sort(ref List<dXY> monotones)
+        {
+            monotones = monotones.Distinct().ToList();
+
+            monotones.Sort(delegate (dXY A, dXY B)
             {
                 if (A.x > B.x) return 1;
                 else if (A.x < B.x) return -1;
@@ -198,6 +296,24 @@ namespace Monotone_Console
 
             return chain;
         }
+        // double input 대응
+        static List<dXY> convex_test(ref List<dXY> monotones, bool close_chain, int test_count)
+        {
+            // monotone chain 알고리즘에선 forward와 backward list를 따로 관리해야 함
+            List<dXY> chain = new List<dXY>(monotones); // forward chain
+            List<dXY> rev_chain = new List<dXY>(monotones); rev_chain.Reverse(); // backward chain
+
+            convex_unit_test(ref chain, test_count); // forward chain 검사
+            convex_unit_test(ref rev_chain, test_count); // backward chain 검사
+
+            chain.AddRange(rev_chain); // 두 chain 연결
+            if (!close_chain) // 개곡선 처리
+            {
+                chain.RemoveAt(chain.Count - 1);
+            }
+
+            return chain;
+        }
 
         // convex_unit_test
         static void convex_unit_test(ref List<XY> chain, int test_count)
@@ -214,7 +330,7 @@ namespace Monotone_Console
                 {
                     float cross = cross_product(ref chain, start, middle, end);
 
-                    if (cross < 0)
+                    if (cross <= 0)
                     {
                         chain.RemoveAt(middle);
                     }
@@ -230,6 +346,50 @@ namespace Monotone_Console
                 {
                     Console.WriteLine("convex_unit_test : " + i + " times\n");
                     break;
+                }
+                else if (i == test_count - 1)
+                {
+                    int n = i + 1;
+                    Console.WriteLine("convex_unit_test limit : " + n + " times\n");
+                }
+            }
+        }
+        // double input 대응
+        static void convex_unit_test(ref List<dXY> chain, int test_count)
+        {
+            int start, middle, end;
+            int break_checking;
+
+            for (int i = 0; i < test_count; i++)
+            {
+                start = 0; middle = 1; end = 2;
+                break_checking = chain.Count;
+
+                while (end < chain.Count) // convex 검사
+                {
+                    double cross = cross_product(ref chain, start, middle, end);
+
+                    if (cross <= 0)
+                    {
+                        chain.RemoveAt(middle);
+                    }
+                    else
+                    {
+                        start = middle;
+                        middle = end;
+                        end++;
+                    }
+                }
+
+                if (break_checking == chain.Count) // convex 완성 체크
+                {
+                    Console.WriteLine("convex_unit_test : " + i + " times\n");
+                    break;
+                }
+                else if (i == test_count - 1)
+                {
+                    int n = i + 1;
+                    Console.WriteLine("convex_unit_test limit : " + n + " times\n");
                 }
             }
         }
